@@ -9,16 +9,19 @@ Requirements
 
 Installation / Update
 
-1. Run:
-   ```sh
-   sudo ./steam-compatsync-setup.sh
-   ```
-2. The installer will:
-   - scan external Steam libraries,
-   - offer to configure a shared group (variable `GROUP_NAME` in steam-compatsync-setup.sh),
-   - create the executable sync script (`FINAL_SCRIPT`),
-   - add an autostart entry (`GLOBAL_AUTOSTART`),
-   - install a copy of the installer to `SELF_INSTALL_PATH`.
+Run:
+
+```sh
+sudo ./steam-compatsync-setup.sh
+```
+
+The installer will:
+
+- scan external Steam libraries (default: `STEAM_CONFIG="$REAL_HOME/.local/share/Steam/steamapps/libraryfolders.vdf"`),
+- offer to configure a shared group (default: `GROUP_NAME="steam"`)
+- create the executable sync script (default: `FINAL_SCRIPT="/usr/local/bin/steam-compatsync.sh"`),
+- add an autostart entry (default:`GLOBAL_AUTOSTART="/etc/xdg/autostart/steam-compatsync.desktop"`),
+- install a copy of the installer (default:`SELF_INSTALL_PATH="/usr/local/bin/steam-compatsync-setup"`)
 
 Usage
 
@@ -37,12 +40,8 @@ Uninstall
 
 Notes & Security
 
-- The script optionally changes ownership and group on external library paths. Default group is set by `GROUP_NAME`.
+- The script optionally changes ownership and group on external library paths. Default group is set by `GROUP_NAME` (default: `steam`).
 - Uninstall does not remove the created group or revert permissions automatically.
 - Verify external library paths listed in your `libraryfolders.vdf` before running the installer.
 - NTFS note: NTFS does not support POSIX permissions — mount with the correct uid= and gid= (or set correct ownership after mount) to ensure access.
 - This project has not been tested with SELinux or AppArmor; additional policy changes or disabling enforcement may be required on systems using those LSMs.
-
-Code references
-
-- Installer and core logic: `steam-compatsync-setup.sh` — defines `FINAL_SCRIPT`, `GLOBAL_AUTOSTART`, `SELF_INSTALL_PATH`, `GROUP_NAME` and handles `--uninstall`.
