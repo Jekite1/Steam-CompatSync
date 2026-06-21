@@ -6,6 +6,13 @@ if [ -z "$SUDO_USER" ]; then
     exit 1
 fi
 
+# Loking for ACL
+if ! command -v setfacl >/dev/null 2>&1; then
+    echo "!Error: setfacl is not installed."
+    echo "Install package 'acl' and run the installer again."
+    exit 1
+fi
+
 # Determining the real user and their home directory
 REAL_USER=$SUDO_USER
 REAL_HOME=$(getent passwd "$REAL_USER" | cut -d: -f6)
@@ -92,7 +99,7 @@ fi
 
 # setting up groups
 echo ""
-read -p "Set/update permissions for group $GROUP_NAME? (y/n):" confirm_group
+read -p "Configure shared multi-user access for all detected Steam libraries? Group name: $GROUP_NAME (y/n): " confirm_group
 if [[ $confirm_group =~ ^[Yy]$ ]]; then
     if ! getent group "$GROUP_NAME" > /dev/null; then
         echo "*Creating group $GROUP_NAME..."
@@ -102,9 +109,11 @@ if [[ $confirm_group =~ ^[Yy]$ ]]; then
 
     echo "*Applying permissions to libraries..."
     for p in $RAW_PATHS; do
+        echo "  -> $p"
         chgrp -R "$GROUP_NAME" "$p"
-        chmod -R 775 "$p"
-        chmod g+s "$p"
+        setfacl -R -m g:$GROUP_NAME:rwx "$p"
+        setfacl -R -d -m g:$GROUP_NAME:rwx "$p"
+        find "$p" -type d -exec chmod g+s {} \;
     done
 fi
 
