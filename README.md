@@ -40,7 +40,7 @@ Uninstall
 
 Notes & Security
 
-- The script optionally changes ownership and group on external library paths. Default group is set by `GROUP_NAME` (default: `steam`).
+- The script optionally changes group on external library paths. Default group is set by `GROUP_NAME` (default: `steam`).
 - Uninstall does not remove the created group or revert permissions automatically.
 - Verify external library paths listed in your `libraryfolders.vdf` before running the installer.
 - NTFS note: NTFS does not support POSIX permissions — mount with the correct uid= and gid= (or set correct ownership after mount) to ensure access.
